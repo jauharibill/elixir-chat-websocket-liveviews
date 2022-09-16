@@ -53,6 +53,7 @@ defmodule Demo.Chat do
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:chat_created)
   end
 
   @doc """
@@ -71,6 +72,7 @@ defmodule Demo.Chat do
     message
     |> Message.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:chat_updated)
   end
 
   @doc """
@@ -100,5 +102,16 @@ defmodule Demo.Chat do
   """
   def change_message(%Message{} = message, attrs \\ %{}) do
     Message.changeset(message, attrs)
+  end
+
+  def subscribe() do
+    Phoenix.PubSub.subscribe(Demo.PubSub, "chats")
+  end
+
+  defp broadcast({:error, error} = error, _event), do: error
+
+  defp broadcast({:ok, chat}, event) do
+    Phoenix.PubSub.broadcast(Demo.PubSub, "chats", {event, chat})
+    {:ok, chat}
   end
 end

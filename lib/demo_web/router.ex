@@ -24,6 +24,13 @@ defmodule DemoWeb.Router do
     live("/messages/:id", MessageLive.Show, :show)
     live("/messages/:id/show/edit", MessageLive.Show, :edit)
 
+    live "/sender", ChatLive.Index, :index
+    live "/sender/new", ChatLive.Index, :new
+    live "/sender/:id/edit", ChatLive.Index, :edit
+
+    live "/sender/:id", ChatLive.Show, :show
+    live "/sender/:id/show/edit", ChatLive.Show, :edit
+
     get("/", PageController, :index)
   end
 
